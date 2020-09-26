@@ -15,5 +15,11 @@
   "bugs": {
     "url": "https://github.com/Eyuwankg-Swankg/image-uploader/issues"
   },
-  "homepage": "https://github.com/Eyuwankg-Swankg/image-uploader#readme"
+  "homepage": "https://github.com/Eyuwankg-Swankg/image-uploader#readme",
+  "dependencies": {
+    "ejs": "^3.1.5",
+    "express": "^4.17.1",
+    "multer": "^1.4.2",
+    "passport": "^0.4.1"
+  }
 }
