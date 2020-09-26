@@ -1,0 +1,19 @@
+{
+  "name": "image-uploader",
+  "version": "1.0.0",
+  "description": "NodeJs application to upload and view Image for a Particular User",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Eyuwankg-Swankg/image-uploader.git"
+  },
+  "author": "Eyuwankg",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Eyuwankg-Swankg/image-uploader/issues"
+  },
+  "homepage": "https://github.com/Eyuwankg-Swankg/image-uploader#readme"
+}
