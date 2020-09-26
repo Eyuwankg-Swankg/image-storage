@@ -1,11 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=\, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=\, initial-scale=1.0" />
+    <link rel="stylesheet" href="register-login.css" />
     <title>Register</title>
-</head>
-<body>
-    
-</body>
+  </head>
+  <body>
+    <form action="/gallery" method="POST">
+      <input name="username" placeholder="Username" type="text" required />
+      <input name="email" placeholder="Email" type="email" required />
+      <input name="password" placeholder="Password" type="password" required />
+      <button type="submit">Register</button>
+    </form>
+    <img src="gallery.svg" id="svg" />
+  </body>
 </html>
