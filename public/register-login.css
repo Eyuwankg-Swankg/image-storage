@@ -23,7 +23,7 @@ body {
 #svg-login {
   width: 38rem;
   position: absolute;
-  bottom: 5%;
+  bottom: 6%;
   right: 10%;
   animation: svgAnimation 1s ease-in-out 0.5s;
   animation-fill-mode: backwards;
