@@ -9,12 +9,12 @@ function initialize(passport, getUserByEmail) {
     ) {
       const user = getUserByEmail(email);
       if (user == null) {
-        return done(null, false, { message: "user not registered" });
+        return done(null, false);
       }
       if (passwordHash.verify(password, user.password)) {
         return done(null, user);
       } else {
-        return done(null, false, { message: "Password Incorret" });
+        return done(null, false);
       }
     })
   );

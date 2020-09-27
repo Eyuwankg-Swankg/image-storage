@@ -1,7 +1,6 @@
 const express = require("express");
 const ejs = require("ejs");
 const passport = require("passport");
-const flash = require("express-flash");
 const session = require("express-session");
 const path = require("path");
 const bodyparser = require("body-parser");
@@ -23,8 +22,6 @@ app.set("view engine", "ejs");
 // parsing incoming urls
 app.use(bodyparser.urlencoded({ extended: false }));
 
-// express flash messages
-app.use(flash());
 
 // express session
 app.use(
