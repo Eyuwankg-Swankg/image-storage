@@ -60,6 +60,7 @@
   </head>
   <body>
     <div id="particles-js">
+      <h1><%= typeof messages=='undefined'?'':messages%></h1>
       <form action="/login" method="POST">
         <input name="email" placeholder="Email" type="email" required />
         <input

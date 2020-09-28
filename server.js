@@ -1,6 +1,7 @@
 const express = require("express");
 const ejs = require("ejs");
 const passport = require("passport");
+const flash = require("connect-flash");
 const session = require("express-session");
 const path = require("path");
 const bodyparser = require("body-parser");
@@ -20,7 +21,7 @@ passport.use(
   ) {
     const user = getUserByEmail(email);
     if (user == null) {
-      return done(null, false);
+      return done(null, false, {});
     }
     if (passwordHash.verify(password, user.password)) {
       return done(null, user);
@@ -47,6 +48,20 @@ app.use(
   })
 );
 
+// flash for messages
+app.use(flash());
+
+app.get("/login/failure", (req, res) => {
+  req.flash("info", "invalid login");
+  res.redirect("/login");
+});
+
+app.get("/register/failure", (req, res) => {
+  req.flash("info", "user already exists");
+  res.redirect("/register");
+});
+
+// initializa passport
 app.use(passport.initialize());
 
 // serving static files
@@ -57,10 +72,10 @@ app.use(express.static(__dirname + "/public"));
 //@access  -  PRIVATE
 app.post(
   "/login",
-  passport.authenticate("local", { failureRedirect: "/login" }),
-  function (req, res) {
-    res.redirect("/gallery");
-  }
+  passport.authenticate("local", {
+    successRedirect: "/gallery",
+    failureRedirect: "/login/failure",
+  })
 );
 
 //@route  -  GET /
@@ -84,14 +99,14 @@ app.get("/", (req, res) => {
 //@desc  -  route to register page
 //@access  -  PUBLIC
 app.get("/register", (req, res) => {
-  res.render("register.ejs");
+  res.render("register.ejs", { messages: req.flash("info") });
 });
 
 //@route  -  GET /login
 //@desc  -  route to login page
 //@access  -  PUBLIC
 app.get("/login", (req, res) => {
-  res.render("login.ejs");
+  res.render("login.ejs", { messages: req.flash("info") });
 });
 
 //@route  -  GET /gallery
@@ -106,6 +121,10 @@ app.get("/gallery", (req, res) => {
 //@access  -  PRIVATE
 app.post("/register", (req, res) => {
   if (users == null) users = [];
+  if (users !== []) {
+    if (users.findIndex((user) => user.email === req.body.email) !== -1)
+      res.redirect("/register/failure");
+  }
   try {
     const hashedPassword = passwordHash.generate(req.body.password);
     users.push({
