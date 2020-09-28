@@ -11,8 +11,9 @@ const fs = require("fs");
 const app = express();
 
 var users = [];
-
+// function to get user by email
 const getUserByEmail = (email) => users.find((user) => user.email === email);
+// passport function
 passport.use(
   new LocalStrategy({ usernameField: "email" }, function (
     email,
@@ -51,11 +52,17 @@ app.use(
 // flash for messages
 app.use(flash());
 
+//@route  -  GET /login/failure
+//@desc  -  route to add fail message
+//@access  -  PRIVATE
 app.get("/login/failure", (req, res) => {
   req.flash("info", "invalid username or password");
   res.redirect("/login");
 });
 
+//@route  -  GET /register/failure
+//@desc  -  route to add fail message
+//@access  -  PRIVATE
 app.get("/register/failure", (req, res) => {
   req.flash("info", "user already exists");
   res.redirect("/register");
@@ -115,7 +122,7 @@ app.get("/login", (req, res) => {
 //@desc  -  route to gallery page
 //@access  -  PUBLIC
 app.get("/gallery", (req, res) => {
-  res.send("Gallery");
+  res.render("gallery.ejs");
 });
 
 //@route  -  POST /register
