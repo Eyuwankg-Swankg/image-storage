@@ -129,3 +129,10 @@ form button:active {
     transform: translateX(0);
   }
 }
+
+
+h1{
+  letter-spacing: 2px;
+  color: snow;
+}
+

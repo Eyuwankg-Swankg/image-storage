@@ -52,7 +52,7 @@ app.use(
 app.use(flash());
 
 app.get("/login/failure", (req, res) => {
-  req.flash("info", "invalid login");
+  req.flash("info", "invalid username or password");
   res.redirect("/login");
 });
 
@@ -106,7 +106,9 @@ app.get("/register", (req, res) => {
 //@desc  -  route to login page
 //@access  -  PUBLIC
 app.get("/login", (req, res) => {
-  res.render("login.ejs", { messages: req.flash("info") });
+  res.render("login.ejs", {
+    messages: req.flash("info"),
+  });
 });
 
 //@route  -  GET /gallery
