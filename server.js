@@ -4,24 +4,39 @@ const passport = require("passport");
 const session = require("express-session");
 const path = require("path");
 const bodyparser = require("body-parser");
+const LocalStrategy = require("passport-local").Strategy;
 const passwordHash = require("password-hash");
-const initializePassport = require("./passport-config");
-
 const fs = require("fs");
 const app = express();
 
 var users = [];
 
-initializePassport(passport, (email) =>
-  users.find((user) => user.email === email)
+const getUserByEmail = (email) => users.find((user) => user.email === email);
+passport.use(
+  new LocalStrategy({ usernameField: "email" }, function (
+    email,
+    password,
+    done
+  ) {
+    const user = getUserByEmail(email);
+    if (user == null) {
+      return done(null, false);
+    }
+    if (passwordHash.verify(password, user.password)) {
+      return done(null, user);
+    } else {
+      return done(null, false);
+    }
+  })
 );
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((user, done) => done(null, user));
 
 // seting up view engine
 app.set("view engine", "ejs");
 
 // parsing incoming urls
 app.use(bodyparser.urlencoded({ extended: false }));
-
 
 // express session
 app.use(
@@ -33,19 +48,20 @@ app.use(
 );
 
 app.use(passport.initialize());
-app.use(passport.session());
 
+// serving static files
+app.use(express.static(__dirname + "/public"));
+
+//@route  -  POST /login
+//@desc  -  route to verify user
+//@access  -  PRIVATE
 app.post(
   "/login",
   passport.authenticate("local", { failureRedirect: "/login" }),
   function (req, res) {
-    console.log("checked");
     res.redirect("/gallery");
   }
 );
-
-// serving static files
-app.use(express.static(__dirname + "/public"));
 
 //@route  -  GET /
 //@desc  -  route to Home page
