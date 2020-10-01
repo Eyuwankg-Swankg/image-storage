@@ -12,6 +12,8 @@ const passwordHash = require("password-hash");
 const fs = require("fs");
 const app = express();
 
+const PORT = process.env.PORT || 3000;
+
 // multer diskstorage
 var storage = multer.diskStorage({
   destination: "./public/uploads/",
@@ -27,9 +29,9 @@ var storage = multer.diskStorage({
 var upload = multer({
   storage: storage,
   limits: { fileSize: 1000000 },
-  // fileFilter: function (req, file, cb) {
-  //   checkFileType(file, cb);
-  // },
+  fileFilter: function (req, file, cb) {
+    checkFileType(file, cb);
+  },
 }).single("image");
 
 // variable declarations
@@ -167,7 +169,7 @@ app.get(
     else next();
   },
   (req, res) => {
-    // if (users.length == 0) res.redirect("/");
+    if (users.length == 0) res.redirect("/");
     if (user != null) res.redirect("/gallery");
     res.render("register.ejs", { messages: req.flash("info") });
   }
@@ -222,7 +224,6 @@ app.post("/upload", (req, res) => {
             if (err) throw err;
           }
         );
-        console.log(user);
         res.redirect("/gallery");
       }
     }
@@ -268,5 +269,5 @@ app.post(
   }
 );
 
-// listen to PORT 3000
-app.listen(3000, () => console.log("Server running at 3000"));
+// listen to PORT
+app.listen(PORT, () => console.log("Server running at 3000"));

@@ -13,17 +13,17 @@ body {
 }
 
 h1 {
-  padding: 30px 0px;
+  padding: 3rem 0;
   text-align: center;
   color: white;
-  letter-spacing: 2px;
+  letter-spacing: 0.2rem;
 }
 
 #add {
   height: 10vh;
   position: absolute;
-  bottom: 50px;
-  right: 50px;
+  bottom: 5rem;
+  right: 5rem;
   cursor: pointer;
 }
 
@@ -46,7 +46,7 @@ h1 {
   justify-content: space-around;
   align-items: center;
   height: 15vh;
-  padding: 0px 20px;
+  padding: 0 2rem;
 }
 
 #add__image form input {
@@ -55,14 +55,14 @@ h1 {
 }
 
 #add__image form button {
-  padding: 5px 50px;
-  border-radius: 2px;
+  padding: 0.5rem 5rem;
+  border-radius: 0.2rem;
   outline: none;
   border: none;
   background-color: rgba(235, 84, 106, 0.9);
   font-weight: bold;
   font-size: 1.5rem;
-  letter-spacing: 1px;
+  letter-spacing: 0.1rem;
   color: snow;
   cursor: pointer;
 }
@@ -73,11 +73,24 @@ h1 {
 }
 
 #add__image div {
-  width: 300px;
+  width: 30rem;
   display: flex;
   justify-content: flex-end;
 }
 
-#display__photos img{
-  height: 20vh;
+#display__photos img {
+  height: 30vh;
+  width: 30rem;
+  margin: 1rem;
+  border: 0.7rem groove snow;
+  border-radius: 0.5rem;
+}
+
+#display__photos {
+  padding: 1rem 4rem;
+
+  display: flex;
+  justify-content: space-around;
+  align-items: space-around;
+  flex-wrap: wrap;
 }
