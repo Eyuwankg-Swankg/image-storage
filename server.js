@@ -124,7 +124,7 @@ app.get(
     else next();
   },
   (req, res) => {
-    if (users.length == 0) res.redirect("/");
+    // if (users.length == 0) res.redirect("/");
     if (user != null) res.redirect("/gallery");
     res.render("register.ejs", { messages: req.flash("info") });
   }
@@ -154,7 +154,7 @@ app.get(
 app.get("/gallery", (req, res) => {
   console.log(user);
   if (user == null) res.redirect("/");
-  res.render("gallery.ejs", { name: user.username });
+  res.render("gallery.ejs", { user: user });
 });
 
 //@route  -  POST /register
@@ -178,6 +178,7 @@ app.post(
         username: req.body.username,
         email: req.body.email,
         password: hashedPassword,
+        photos: [],
       });
       // console.log(users);
       fs.writeFile(
@@ -197,3 +198,5 @@ app.post(
 
 // listen to PORT 3000
 app.listen(3000, () => console.log("Server running at 3000"));
+
+JSON.stringify;

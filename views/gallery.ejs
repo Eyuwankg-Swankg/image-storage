@@ -56,12 +56,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="gallery.css" />
-    <title>Your Gallery</title>
+    <title>Gallery</title>
   </head>
-  <body>
-    <div id="particles-js">
-      <h1><%=typeof name=='undefined'?'':name %></h1>
+  <body id="particles-js">
+    <h1><%=typeof user=='undefined'?'':user.username %>'s Gallery</h1>
+    <div id="add__image">
+      <div>
+        <img src="close.svg" alt="close" id="exit__modal" />
+      </div>
+      <form action="/" method="POST">
+        <input name="image" type="file" />
+        <button type="submit" id="add__button">Add</button>
+      </form>
     </div>
+    <img src="add-image.svg" alt="add" id="add" />
     <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <!-- stats.js lib -->
     <script src="http://threejs.org/examples/js/libs/stats.min.js"></script>
@@ -148,6 +156,17 @@
         requestAnimationFrame(update);
       };
       requestAnimationFrame(update);
+    </script>
+    <script>
+      document.getElementById("add").addEventListener("click", () => {
+        document.getElementById("add__image").style.display = "flex";
+      });
+      document.getElementById("exit__modal").addEventListener("click", () => {
+        document.getElementById("add__image").style.display = "none";
+      });
+      document.getElementById("add__button").addEventListener("click", () => {
+        document.getElementById("add__image").style.display = "none";
+      });
     </script>
   </body>
 </html>
