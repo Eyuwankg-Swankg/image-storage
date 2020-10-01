@@ -1,0 +1,22 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: inherit;
+}
+
+html {
+  font-size: 10px;
+}
+
+body {
+  box-sizing: border-box;
+}
+
+#particles-js {
+    padding:20px
+}
+
+#particles-js div {
+  width: 100%;
+  height: 100%;
+}

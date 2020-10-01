@@ -11,8 +11,9 @@ const fs = require("fs");
 const app = express();
 
 var users = [];
+var user;
 // function to get user by email
-const getUserByEmail = (email) => users.find((user) => user.email === email);
+const getUserByEmail = (email) => users.find((user) => user.email == email);
 // passport function
 passport.use(
   new LocalStrategy({ usernameField: "email" }, function (
@@ -20,7 +21,7 @@ passport.use(
     password,
     done
   ) {
-    const user = getUserByEmail(email);
+    user = getUserByEmail(email);
     if (user == null) {
       return done(null, false, {});
     }
@@ -79,6 +80,10 @@ app.use(express.static(__dirname + "/public"));
 //@access  -  PRIVATE
 app.post(
   "/login",
+  (req, res, next) => {
+    if (user != null) res.redirect("/gallery");
+    else next();
+  },
   passport.authenticate("local", {
     successRedirect: "/gallery",
     failureRedirect: "/login/failure",
@@ -88,73 +93,107 @@ app.post(
 //@route  -  GET /
 //@desc  -  route to Home page
 //@access  -  PUBLIC
-app.get("/", (req, res) => {
-  fs.readFile(
-    path.join(__dirname, "scratch", "users.txt"),
-    "utf8",
-    (err, data) => {
-      if (err) {
-        throw err;
+app.get(
+  "/",
+  (req, res, next) => {
+    if (user != null) res.redirect("/gallery");
+    else next();
+  },
+  (req, res) => {
+    fs.readFile(
+      path.join(__dirname, "scratch", "users.txt"),
+      "utf8",
+      (err, data) => {
+        if (err) {
+          throw err;
+        }
+        if (data !== "") users = JSON.parse(data);
       }
-      if (data !== "") users = JSON.parse(data);
-    }
-  );
-  res.render("index.ejs");
-});
+    );
+    res.render("index.ejs");
+  }
+);
 
 //@route  -  GET /register
 //@desc  -  route to register page
 //@access  -  PUBLIC
-app.get("/register", (req, res) => {
-  res.render("register.ejs", { messages: req.flash("info") });
-});
+app.get(
+  "/register",
+  (req, res, next) => {
+    if (user != null) res.redirect("/gallery");
+    else next();
+  },
+  (req, res) => {
+    if (users.length == 0) res.redirect("/");
+    if (user != null) res.redirect("/gallery");
+    res.render("register.ejs", { messages: req.flash("info") });
+  }
+);
 
 //@route  -  GET /login
 //@desc  -  route to login page
 //@access  -  PUBLIC
-app.get("/login", (req, res) => {
-  res.render("login.ejs", {
-    messages: req.flash("info"),
-  });
-});
+app.get(
+  "/login",
+  (req, res, next) => {
+    if (user != null) res.redirect("/gallery");
+    else next();
+  },
+  (req, res) => {
+    console.log("---------------------");
+    if (users.length == 0) res.redirect("/");
+    res.render("login.ejs", {
+      messages: req.flash("info"),
+    });
+  }
+);
 
 //@route  -  GET /gallery
 //@desc  -  route to gallery page
 //@access  -  PUBLIC
 app.get("/gallery", (req, res) => {
-  res.render("gallery.ejs");
+  console.log(user);
+  if (user == null) res.redirect("/");
+  res.render("gallery.ejs", { name: user.username });
 });
 
 //@route  -  POST /register
 //@desc  -  post route to register page
 //@access  -  PRIVATE
-app.post("/register", (req, res) => {
-  if (users == null) users = [];
-  if (users !== []) {
-    if (users.findIndex((user) => user.email === req.body.email) !== -1)
-      res.redirect("/register/failure");
+app.post(
+  "/register",
+  (req, res, next) => {
+    if (user != null) res.redirect("/gallery");
+    else next();
+  },
+  (req, res) => {
+    if (users == null) users = [];
+    if (users !== []) {
+      if (users.findIndex((user) => user.email === req.body.email) !== -1)
+        res.redirect("/register/failure");
+    }
+    try {
+      const hashedPassword = passwordHash.generate(req.body.password);
+      users.push({
+        username: req.body.username,
+        email: req.body.email,
+        password: hashedPassword,
+      });
+      // console.log(users);
+      fs.writeFile(
+        path.join(__dirname, "scratch", "users.txt"),
+        JSON.stringify(users),
+        (err) => {
+          if (err) throw err;
+        }
+      );
+      res.redirect("/login");
+    } catch (err) {
+      console.log("error", err);
+      res.redirect("register");
+    }
   }
-  try {
-    const hashedPassword = passwordHash.generate(req.body.password);
-    users.push({
-      username: req.body.username,
-      email: req.body.email,
-      password: hashedPassword,
-    });
-    console.log(users);
-    fs.writeFile(
-      path.join(__dirname, "scratch", "users.txt"),
-      JSON.stringify(users),
-      (err) => {
-        if (err) throw err;
-      }
-    );
-    res.redirect("/login");
-  } catch (err) {
-    console.log(err);
-    res.redirect("register");
-  }
-});
+);
 
 // listen to PORT 3000
 app.listen(3000, () => console.log("Server running at 3000"));
