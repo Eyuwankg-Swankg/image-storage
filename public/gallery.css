@@ -24,6 +24,7 @@ h1 {
   position: absolute;
   bottom: 50px;
   right: 50px;
+  cursor: pointer;
 }
 
 #add__image {
@@ -50,6 +51,7 @@ h1 {
 
 #add__image form input {
   background-color: snow;
+  cursor: pointer;
 }
 
 #add__image form button {
@@ -62,10 +64,12 @@ h1 {
   font-size: 1.5rem;
   letter-spacing: 1px;
   color: snow;
+  cursor: pointer;
 }
 
 #exit__modal {
   height: 5vh;
+  cursor: pointer;
 }
 
 #add__image div {

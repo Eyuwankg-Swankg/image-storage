@@ -64,8 +64,9 @@
       <div>
         <img src="close.svg" alt="close" id="exit__modal" />
       </div>
-      <form action="/" method="POST">
-        <input name="image" type="file" />
+      <form action="/upload" method="POST" enctype="multipart/form-data">
+        <h3 color="snow"><%=typeof msg=='undefined'?'':msg %></h3>
+        <input name="image" type="file" required />
         <button type="submit" id="add__button">Add</button>
       </form>
     </div>
@@ -162,9 +163,6 @@
         document.getElementById("add__image").style.display = "flex";
       });
       document.getElementById("exit__modal").addEventListener("click", () => {
-        document.getElementById("add__image").style.display = "none";
-      });
-      document.getElementById("add__button").addEventListener("click", () => {
         document.getElementById("add__image").style.display = "none";
       });
     </script>

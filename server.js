@@ -4,16 +4,63 @@ const passport = require("passport");
 const flash = require("connect-flash");
 const session = require("express-session");
 const path = require("path");
+const multer = require("multer");
+const { v4 } = require("uuid");
 const bodyparser = require("body-parser");
 const LocalStrategy = require("passport-local").Strategy;
 const passwordHash = require("password-hash");
 const fs = require("fs");
 const app = express();
+var upload = multer({
+  storage: storage,
+  limits: { fileSize: 1000000 },
+  // fileFilter: function (req, file, cb) {
+  //   checkFileType(file, cb);
+  // },
+}).single("image");
 
+// variable declarations
 var users = [];
 var user;
+var userIndex;
+
+// multer diskstorage
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./public/uploads");
+  },
+  filename: function (req, file, cb) {
+    console.log("in filename");
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+      // user.username + v4() + path.extname(file.originalname)
+    );
+  },
+});
+
+// Check File Type
+function checkFileType(file, cb) {
+  // Allowed ext
+  const filetypes = /jpeg|jpg|png|gif/;
+  // Check ext
+  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+  // Check mime
+  const mimetype = filetypes.test(file.mimetype);
+
+  if (mimetype && extname) {
+    return cb(null, true);
+  } else {
+    cb("Error: Images Only!");
+  }
+}
+
+// function get user Index by email
+const getUserIndex = (email) => users.findIndex((user) => user.email == email);
+
 // function to get user by email
 const getUserByEmail = (email) => users.find((user) => user.email == email);
+
 // passport function
 passport.use(
   new LocalStrategy({ usernameField: "email" }, function (
@@ -22,6 +69,7 @@ passport.use(
     done
   ) {
     user = getUserByEmail(email);
+    userIndex = getUserIndex(email);
     if (user == null) {
       return done(null, false, {});
     }
@@ -152,9 +200,36 @@ app.get(
 //@desc  -  route to gallery page
 //@access  -  PUBLIC
 app.get("/gallery", (req, res) => {
-  console.log(user);
+  // console.log(user);
   if (user == null) res.redirect("/");
   res.render("gallery.ejs", { user: user });
+});
+
+//@route  -  POST /upload
+//@desc  -  post route to upload a image
+//@access  -  PRIVATE
+app.post("/upload", (req, res) => {
+  upload(req, res, (err) => {
+    if (err) {
+      res.render("gallery", {
+        msg: err,
+        user: user,
+      });
+    } else {
+      if (req.file == undefined) {
+        res.render("gallery", {
+          msg: "Error: No File Selected!",
+          user: user,
+        });
+      } else {
+        user.photos.push(`uploads/${req.file.filename}`);
+        res.render("gallery", {
+          msg: "File Uploaded!",
+          user: user,
+        });
+      }
+    }
+  });
 });
 
 //@route  -  POST /register
@@ -198,5 +273,3 @@ app.post(
 
 // listen to PORT 3000
 app.listen(3000, () => console.log("Server running at 3000"));
-
-JSON.stringify;
