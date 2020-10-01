@@ -11,6 +11,19 @@ const LocalStrategy = require("passport-local").Strategy;
 const passwordHash = require("password-hash");
 const fs = require("fs");
 const app = express();
+
+// multer diskstorage
+var storage = multer.diskStorage({
+  destination: "./public/uploads/",
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      // file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+      user.username + "-" + v4() + path.extname(file.originalname)
+    );
+  },
+});
+
 var upload = multer({
   storage: storage,
   limits: { fileSize: 1000000 },
@@ -23,21 +36,6 @@ var upload = multer({
 var users = [];
 var user;
 var userIndex;
-
-// multer diskstorage
-var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./public/uploads");
-  },
-  filename: function (req, file, cb) {
-    console.log("in filename");
-    cb(
-      null,
-      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-      // user.username + v4() + path.extname(file.originalname)
-    );
-  },
-});
 
 // Check File Type
 function checkFileType(file, cb) {
@@ -58,9 +56,6 @@ function checkFileType(file, cb) {
 // function get user Index by email
 const getUserIndex = (email) => users.findIndex((user) => user.email == email);
 
-// function to get user by email
-const getUserByEmail = (email) => users.find((user) => user.email == email);
-
 // passport function
 passport.use(
   new LocalStrategy({ usernameField: "email" }, function (
@@ -68,8 +63,8 @@ passport.use(
     password,
     done
   ) {
-    user = getUserByEmail(email);
     userIndex = getUserIndex(email);
+    if (userIndex != -1) user = users[userIndex];
     if (user == null) {
       return done(null, false, {});
     }
@@ -209,24 +204,26 @@ app.get("/gallery", (req, res) => {
 //@desc  -  post route to upload a image
 //@access  -  PRIVATE
 app.post("/upload", (req, res) => {
+  if (user == null) res.redirect("/");
   upload(req, res, (err) => {
     if (err) {
-      res.render("gallery", {
-        msg: err,
-        user: user,
-      });
+      res.redirect("/gallery");
     } else {
       if (req.file == undefined) {
-        res.render("gallery", {
-          msg: "Error: No File Selected!",
-          user: user,
-        });
+        res.redirect("/gallery");
       } else {
         user.photos.push(`uploads/${req.file.filename}`);
-        res.render("gallery", {
-          msg: "File Uploaded!",
-          user: user,
-        });
+        users[userIndex] = user;
+        // update to file
+        fs.writeFile(
+          path.join(__dirname, "scratch", "users.txt"),
+          JSON.stringify(users),
+          (err) => {
+            if (err) throw err;
+          }
+        );
+        console.log(user);
+        res.redirect("/gallery");
       }
     }
   });

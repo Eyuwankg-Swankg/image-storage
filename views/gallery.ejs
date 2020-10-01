@@ -60,6 +60,11 @@
   </head>
   <body id="particles-js">
     <h1><%=typeof user=='undefined'?'':user.username %>'s Gallery</h1>
+    <div id="display__photos">
+      <% user.photos.forEach(function(image){%>
+      <img src="<%=image%>" alt="<%=image%>" />
+      <%});%>
+    </div>
     <div id="add__image">
       <div>
         <img src="close.svg" alt="close" id="exit__modal" />

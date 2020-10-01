@@ -77,3 +77,7 @@ h1 {
   display: flex;
   justify-content: flex-end;
 }
+
+#display__photos img{
+  height: 20vh;
+}
