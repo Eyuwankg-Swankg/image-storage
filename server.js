@@ -18,11 +18,7 @@ const PORT = process.env.PORT || 3000;
 var storage = multer.diskStorage({
   destination: "./public/uploads/",
   filename: function (req, file, cb) {
-    cb(
-      null,
-      // file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-      user.username + "-" + v4() + path.extname(file.originalname)
-    );
+    cb(null, user.username + "-" + v4() + path.extname(file.originalname));
   },
 });
 
@@ -56,7 +52,7 @@ function checkFileType(file, cb) {
 }
 
 // function get user Index by email
-const getUserIndex = (email) => users.findIndex((user) => user.email == email);
+const getUserIndex = (email) => users.findIndex((i) => i.email == email);
 
 // passport function
 passport.use(
