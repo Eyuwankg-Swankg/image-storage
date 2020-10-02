@@ -1,57 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <style>
-      /* ---- reset ---- */
-      body {
-        margin: 0;
-        font: normal 75% Arial, Helvetica, sans-serif;
-      }
-      canvas {
-        display: block;
-      } /* ---- particles.js container ---- */
-      #particles-js {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(235, 84, 106, 0.9);
-        background-image: url("");
-        background-repeat: no-repeat;
-        background-size: cover;
-        background-position: 50% 50%;
-      } /* ---- stats.js ---- */
-      .count-particles {
-        background: #000022;
-        position: absolute;
-        top: 48px;
-        left: 0;
-        width: 80px;
-        color: #13e8e9;
-        font-size: 0.8em;
-        text-align: left;
-        text-indent: 4px;
-        line-height: 14px;
-        padding-bottom: 2px;
-        font-family: Helvetica, Arial, sans-serif;
-        font-weight: bold;
-      }
-      .js-count-particles {
-        font-size: 1.1em;
-      }
-      #stats,
-      .count-particles {
-        -webkit-user-select: none;
-        margin-top: 5px;
-        margin-left: 5px;
-      }
-      #stats {
-        border-radius: 3px 3px 0 0;
-        overflow: hidden;
-      }
-      .count-particles {
-        border-radius: 0 0 3px 3px;
-      }
-    </style>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="gallery.css" />
@@ -59,10 +8,32 @@
   </head>
   <body id="particles-js">
     <h1><%=typeof user=='undefined'?'':user.username %>'s Gallery</h1>
-    <div id="display__photos"></div>
+    <div id="display__photos">
+      <%if (user != "undefined") { user.photos.forEach((image) => {%>
+      <img src="<%=image%>" />
+      <%});} else {%>
+      <h1>No Photos</h1>
+      <%}%>
+    </div>
     <div id="add__image">
       <div>
-        <img src="close.svg" alt="close" id="exit__modal" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="icon icon-tabler icon-tabler-circle-x"
+          width="84"
+          height="84"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="#eb546a"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          id="exit__modal"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <circle cx="12" cy="12" r="9" />
+          <path d="M10 10l4 4m0 -4l-4 4" />
+        </svg>
       </div>
       <form action="/upload" method="POST" enctype="multipart/form-data">
         <h3 color="snow"><%=typeof msg=='undefined'?'':msg %></h3>
@@ -71,113 +42,18 @@
       </form>
     </div>
     <img src="add-image.svg" alt="add" id="add" />
-    <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <!-- stats.js lib -->
-    <script src="http://threejs.org/examples/js/libs/stats.min.js"></script>
     <script>
-      particlesJS("particles-js", {
-        particles: {
-          number: { value: 200, density: { enable: true, value_area: 1026 } },
-          color: { value: "#ffffff" },
-          shape: {
-            type: "polygon",
-            stroke: { width: 0, color: "#000000" },
-            polygon: { nb_sides: 8 },
-            image: { src: "img/github.svg", width: 100, height: 100 },
-          },
-          opacity: {
-            value: 0.2,
-            random: false,
-            anim: { enable: false, speed: 1, opacity_min: 0.1, sync: false },
-          },
-          size: {
-            value: 3,
-            random: true,
-            anim: { enable: false, speed: 40, size_min: 0.1, sync: false },
-          },
-          line_linked: {
-            enable: true,
-            distance: 150,
-            color: "#ffffff",
-            opacity: 0.4,
-            width: 1,
-          },
-          move: {
-            enable: true,
-            speed: 6,
-            direction: "none",
-            random: false,
-            straight: false,
-            out_mode: "out",
-            bounce: false,
-            attract: { enable: false, rotateX: 600, rotateY: 1200 },
-          },
-        },
-        interactivity: {
-          detect_on: "canvas",
-          events: {
-            onhover: { enable: true, mode: "grab" },
-            onclick: { enable: true, mode: "push" },
-            resize: true,
-          },
-          modes: {
-            grab: { distance: 200, line_linked: { opacity: 1 } },
-            bubble: {
-              distance: 400,
-              size: 40,
-              duration: 2,
-              opacity: 8,
-              speed: 3,
-            },
-            repulse: { distance: 200, duration: 0.4 },
-            push: { particles_nb: 4 },
-            remove: { particles_nb: 2 },
-          },
-        },
-        retina_detect: true,
-      });
-      var count_particles, stats, update;
-      //   stats = new Stats();
-      //   stats.setMode(0);
-      //   stats.domElement.style.position = "absolute";
-      //   stats.domElement.style.left = "0px";
-      //   stats.domElement.style.top = "0px";
-      //   document.body.appendChild(stats.domElement);
-      count_particles = document.querySelector(".js-count-particles");
-      update = function () {
-        stats.begin();
-        stats.end();
-        if (
-          window.pJSDom[0].pJS.particles &&
-          window.pJSDom[0].pJS.particles.array
-        ) {
-          count_particles.innerText =
-            window.pJSDom[0].pJS.particles.array.length;
-        }
-        requestAnimationFrame(update);
-      };
-      requestAnimationFrame(update);
-    </script>
-    <script>
-      const images = document.getElementById("display__photos");
-      if (user != "undefined") {
-        user.photos.forEach((image) => {
-          const img = document.createElement("img");
-          img.src = image;
-          img.alt = image;
-          images.appendChild(img);
-        });
-      } else {
-        const heading = document.createElement("h1");
-        h1.innerText = "No Photos";
-        images.appendChild(h1);
-      }
+      console.log("i am js");
       document.getElementById("add").addEventListener("click", () => {
         document.getElementById("add__image").style.display = "flex";
       });
       document.getElementById("exit__modal").addEventListener("click", () => {
         document.getElementById("add__image").style.display = "none";
       });
+      // const img = document.createElement("img");
+      // img.src = image;
+      // img.alt = image;
+      // document.getElementById("display__photos").appendChild(img);
     </script>
   </body>
 </html>
