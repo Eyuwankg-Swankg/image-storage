@@ -9,7 +9,6 @@
       }
       canvas {
         display: block;
-        vertical-align: bottom;
       } /* ---- particles.js container ---- */
       #particles-js {
         position: absolute;
@@ -60,11 +59,7 @@
   </head>
   <body id="particles-js">
     <h1><%=typeof user=='undefined'?'':user.username %>'s Gallery</h1>
-    <div id="display__photos">
-      <% user.photos.forEach(function(image){%>
-      <img src="<%=image%>" alt="<%=image%>" />
-      <%});%>
-    </div>
+    <div id="display__photos"></div>
     <div id="add__image">
       <div>
         <img src="close.svg" alt="close" id="exit__modal" />
@@ -164,6 +159,19 @@
       requestAnimationFrame(update);
     </script>
     <script>
+      const images = document.getElementById("display__photos");
+      if (user != "undefined") {
+        user.photos.forEach((image) => {
+          const img = document.createElement("img");
+          img.src = image;
+          img.alt = image;
+          images.appendChild(img);
+        });
+      } else {
+        const heading = document.createElement("h1");
+        h1.innerText = "No Photos";
+        images.appendChild(h1);
+      }
       document.getElementById("add").addEventListener("click", () => {
         document.getElementById("add__image").style.display = "flex";
       });

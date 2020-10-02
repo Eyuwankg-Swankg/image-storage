@@ -3,6 +3,7 @@ const ejs = require("ejs");
 const passport = require("passport");
 const flash = require("connect-flash");
 const session = require("express-session");
+var cookieParser = require("cookie-parser");
 const path = require("path");
 const multer = require("multer");
 const { v4 } = require("uuid");
@@ -62,12 +63,11 @@ passport.use(
     done
   ) {
     userIndex = getUserIndex(email);
-    if (userIndex != -1) user = users[userIndex];
-    if (user == null) {
+    if (userIndex == -1) {
       return done(null, false, {});
     }
-    if (passwordHash.verify(password, user.password)) {
-      return done(null, user);
+    if (passwordHash.verify(password, users[userIndex].password)) {
+      return done(null, users[userIndex]);
     } else {
       return done(null, false);
     }
@@ -81,6 +81,7 @@ app.set("view engine", "ejs");
 
 // parsing incoming urls
 app.use(bodyparser.urlencoded({ extended: false }));
+app.use(bodyparser.json());
 
 // express session
 app.use(
@@ -90,6 +91,7 @@ app.use(
     saveUninitialized: false,
   })
 );
+app.use(cookieParser());
 
 // flash for messages
 app.use(flash());
@@ -121,14 +123,13 @@ app.use(express.static(__dirname + "/public"));
 //@access  -  PRIVATE
 app.post(
   "/login",
-  (req, res, next) => {
-    if (user != null) res.redirect("/gallery");
-    else next();
-  },
   passport.authenticate("local", {
-    successRedirect: "/gallery",
     failureRedirect: "/login/failure",
-  })
+  }),
+  (req, res) => {
+    req.session.user = users[userIndex];
+    res.redirect("/gallery");
+  }
 );
 
 //@route  -  GET /
@@ -137,10 +138,11 @@ app.post(
 app.get(
   "/",
   (req, res, next) => {
-    if (user != null) res.redirect("/gallery");
+    if (req.session.user) res.redirect("/gallery");
     else next();
   },
   (req, res) => {
+    req.session.user = null;
     fs.readFile(
       path.join(__dirname, "scratch", "users.txt"),
       "utf8",
@@ -148,7 +150,9 @@ app.get(
         if (err) {
           throw err;
         }
-        if (data !== "") users = JSON.parse(data);
+        if (data !== "") {
+          users = JSON.parse(data);
+        }
       }
     );
     res.render("index.ejs");
@@ -161,12 +165,11 @@ app.get(
 app.get(
   "/register",
   (req, res, next) => {
-    if (user != null) res.redirect("/gallery");
+    if (req.session.user) res.redirect("/gallery");
     else next();
   },
   (req, res) => {
     if (users.length == 0) res.redirect("/");
-    if (user != null) res.redirect("/gallery");
     res.render("register.ejs", { messages: req.flash("info") });
   }
 );
@@ -177,11 +180,10 @@ app.get(
 app.get(
   "/login",
   (req, res, next) => {
-    if (user != null) res.redirect("/gallery");
+    if (req.session.user) res.redirect("/gallery");
     else next();
   },
   (req, res) => {
-    console.log("---------------------");
     if (users.length == 0) res.redirect("/");
     res.render("login.ejs", {
       messages: req.flash("info"),
@@ -193,16 +195,15 @@ app.get(
 //@desc  -  route to gallery page
 //@access  -  PUBLIC
 app.get("/gallery", (req, res) => {
-  // console.log(user);
-  if (user == null) res.redirect("/");
-  res.render("gallery.ejs", { user: user });
+  if (req.session.user == null) res.redirect("/");
+  res.render("gallery.ejs", { user: req.session.user });
 });
 
 //@route  -  POST /upload
 //@desc  -  post route to upload a image
 //@access  -  PRIVATE
 app.post("/upload", (req, res) => {
-  if (user == null) res.redirect("/");
+  if (req.session.user == null) res.redirect("/");
   upload(req, res, (err) => {
     if (err) {
       res.redirect("/gallery");
@@ -210,7 +211,9 @@ app.post("/upload", (req, res) => {
       if (req.file == undefined) {
         res.redirect("/gallery");
       } else {
+        const user = req.session.user;
         user.photos.push(`uploads/${req.file.filename}`);
+        req.session.user = user;
         users[userIndex] = user;
         // update to file
         fs.writeFile(
@@ -232,13 +235,13 @@ app.post("/upload", (req, res) => {
 app.post(
   "/register",
   (req, res, next) => {
-    if (user != null) res.redirect("/gallery");
+    if (req.session.user) res.redirect("/gallery");
     else next();
   },
   (req, res) => {
     if (users == null) users = [];
     if (users !== []) {
-      if (users.findIndex((user) => user.email === req.body.email) !== -1)
+      if (users.findIndex((i) => i.email === req.body.email) !== -1)
         res.redirect("/register/failure");
     }
     try {
