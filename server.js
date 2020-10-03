@@ -271,5 +271,35 @@ app.post(
   }
 );
 
+//@route  -  GET /delete/:imagePath
+//@desc  -  route to delete a image from a users gallery
+//@access  -  PRIVATE
+app.get("/delete/:imagePath", (req, res) => {
+  if (req.session.user) {
+    const imageToDelete = "uploads/" + req.params.imagePath.slice(1);
+    const user = req.session.user;
+    const photos = user.photos;
+    const imageIndex = photos.findIndex((image) => image == imageToDelete);
+    console.log("----", photos.length, "-------");
+    photos.splice(imageIndex, 1);
+    console.log("----", photos.length, "-------");
+    user.photos = photos;
+    console.log("user photos", user.photos.length);
+    req.session.user = user;
+    console.log("user photos in session", req.session.user.photos.length);
+    users[getUserIndex(user.email)] = user;
+    fs.writeFile(
+      path.join(__dirname, "scratch", "users.txt"),
+      JSON.stringify(users),
+      (err) => {
+        if (err) throw err;
+      }
+    );
+    res.redirect("/gallery");
+  } else {
+    res.redirect("/");
+  }
+});
+
 // listen to PORT
 app.listen(PORT, () => console.log("Server running at 3000"));
