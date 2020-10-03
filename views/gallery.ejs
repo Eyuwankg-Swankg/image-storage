@@ -10,13 +10,16 @@
     />
     <title>Gallery</title>
   </head>
-  <body id="particles-js">
+  <body>
     <h1><%=typeof user=='undefined'?'':user.username %>'s Gallery</h1>
     <div id="display__photos">
-      <%if (user != "undefined") { user.photos.forEach((image,index) => {%>
+      <%if (user != "undefined") { %> <%if(user.photos.length>0){
+      user.photos.forEach((image,index) => {%>
       <img src="<%=image%>" alt="<%=image%>" class="photos" />
-      <%});} else {%>
-      <h1>No Photos</h1>
+      <%});}else{%>
+      <h1>No Photos Here</h1>
+      <%}}else{%>
+      <h1>User Not Found Pls Login</h1>
       <%}%>
     </div>
     <div id="add__image">
@@ -68,7 +71,7 @@
       <a href="" id="download__image" download>
         <img id="view" />
       </a>
-      <div>Delete</div>
+      <a id="delete__image" href="">Delete</a>
     </div>
     <script>
       document.getElementById("add").addEventListener("click", () => {
@@ -83,6 +86,8 @@
       });
       images.forEach((image) => {
         document.getElementById("download__image").href = image.src;
+        document.getElementById("delete__image").href =
+          "/delete/:" + image.src.slice(image.src.lastIndexOf("/") + 1);
         image.addEventListener("click", () => {
           document.getElementById("view").src = image.src;
           document.getElementById("view__image").style.display = "flex";
