@@ -9,8 +9,8 @@
   <body id="particles-js">
     <h1><%=typeof user=='undefined'?'':user.username %>'s Gallery</h1>
     <div id="display__photos">
-      <%if (user != "undefined") { user.photos.forEach((image) => {%>
-      <img src="<%=image%>" />
+      <%if (user != "undefined") { user.photos.forEach((image,index) => {%>
+      <img src="<%=image%>" alt="<%=image%>" class="photos" />
       <%});} else {%>
       <h1>No Photos</h1>
       <%}%>
@@ -42,18 +42,47 @@
       </form>
     </div>
     <img src="add-image.svg" alt="add" id="add" />
+    <div id="view__image">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="icon icon-tabler icon-tabler-circle-x"
+        width="84"
+        height="84"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="#eb546a"
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        id="exit__view"
+      >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+        <circle cx="12" cy="12" r="9" />
+        <path d="M10 10l4 4m0 -4l-4 4" />
+      </svg>
+      <a href="" id="download__image" download>
+        <img id="view" />
+      </a>
+      <div>Delete</div>
+    </div>
     <script>
-      console.log("i am js");
       document.getElementById("add").addEventListener("click", () => {
         document.getElementById("add__image").style.display = "flex";
       });
       document.getElementById("exit__modal").addEventListener("click", () => {
         document.getElementById("add__image").style.display = "none";
       });
-      // const img = document.createElement("img");
-      // img.src = image;
-      // img.alt = image;
-      // document.getElementById("display__photos").appendChild(img);
+      const images = Array.from(document.getElementsByClassName("photos"));
+      document.getElementById("exit__view").addEventListener("click", () => {
+        document.getElementById("view__image").style.display = "none";
+      });
+      images.forEach((image) => {
+        document.getElementById("download__image").href = image.src;
+        image.addEventListener("click", () => {
+          document.getElementById("view").src = image.src;
+          document.getElementById("view__image").style.display = "flex";
+        });
+      });
     </script>
   </body>
 </html>

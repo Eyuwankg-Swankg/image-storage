@@ -19,7 +19,10 @@ const PORT = process.env.PORT || 3000;
 var storage = multer.diskStorage({
   destination: "./public/uploads/",
   filename: function (req, file, cb) {
-    cb(null, user.username + "-" + v4() + path.extname(file.originalname));
+    cb(
+      null,
+      req.session.user.username + "-" + v4() + path.extname(file.originalname)
+    );
   },
 });
 
@@ -212,7 +215,7 @@ app.post("/upload", (req, res) => {
         res.redirect("/gallery");
       } else {
         const user = req.session.user;
-        user.photos.push(`uploads/${req.file.filename}`);
+        req.session.user.photos.push(`uploads/${req.file.filename}`);
         req.session.user = user;
         users[userIndex] = user;
         // update to file
