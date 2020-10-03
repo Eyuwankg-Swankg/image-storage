@@ -11,6 +11,7 @@ html {
 
 body {
   box-sizing: border-box;
+  font-family: "Courier Prime", monospace;
 }
 
 h1 {
@@ -110,11 +111,12 @@ h1 {
 }
 
 #download__image {
-  width: 80rem;
-  height: 60vh;
+  width: 90rem;
+  height: 70vh;
   margin: 2rem;
   background-repeat: no-repeat;
   background-size: contain;
+  border: 0.1rem solid rgb(235, 84, 106);
 }
 
 #download__image img {
@@ -126,7 +128,7 @@ h1 {
   color: snow;
   letter-spacing: 0.2rem;
   font-size: 1.3rem;
-  background-color: rgba(235, 84, 106, 0.9);
+  background-color: rgba(235, 84, 106, 1);
   padding: 0.5rem 4rem;
   border-radius: 0.5rem;
   cursor: pointer;
@@ -135,4 +137,9 @@ h1 {
 
 #exit__view {
   cursor: pointer;
+}
+
+#view__image h2 {
+  letter-spacing: 0.2rem;
+  color: white;
 }
