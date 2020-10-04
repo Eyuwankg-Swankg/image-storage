@@ -172,7 +172,7 @@ app.get(
     else next();
   },
   (req, res) => {
-    if (users.length == 0) res.redirect("/");
+    // if (users.length == 0) res.redirect("/");
     res.render("register.ejs", { messages: req.flash("info") });
   }
 );
@@ -276,18 +276,16 @@ app.post(
 //@access  -  PRIVATE
 app.get("/delete/:imagePath", (req, res) => {
   if (req.session.user) {
-    const imageToDelete = "uploads/" + req.params.imagePath.slice(1);
+    const temp = req.params.imagePath.slice(1);
+    const imageToDelete = "uploads/" + temp;
     const user = req.session.user;
     const photos = user.photos;
     const imageIndex = photos.findIndex((image) => image == imageToDelete);
-    console.log("----", photos.length, "-------");
     photos.splice(imageIndex, 1);
-    console.log("----", photos.length, "-------");
     user.photos = photos;
-    console.log("user photos", user.photos.length);
     req.session.user = user;
-    console.log("user photos in session", req.session.user.photos.length);
     users[getUserIndex(user.email)] = user;
+    // update all users in file
     fs.writeFile(
       path.join(__dirname, "scratch", "users.txt"),
       JSON.stringify(users),
@@ -295,6 +293,11 @@ app.get("/delete/:imagePath", (req, res) => {
         if (err) throw err;
       }
     );
+    // delete the image
+    fs.unlink(path.join(__dirname, "public", "uploads", temp), (err) => {
+      if (err) throw err;
+      console.log("File Deleted");
+    });
     res.redirect("/gallery");
   } else {
     res.redirect("/");

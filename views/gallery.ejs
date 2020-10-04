@@ -86,11 +86,11 @@
       });
       images.forEach((image) => {
         document.getElementById("download__image").href = image.src;
-        document.getElementById("delete__image").href =
-          "/delete/:" + image.src.slice(image.src.lastIndexOf("/") + 1);
         image.addEventListener("click", () => {
           document.getElementById("view").src = image.src;
           document.getElementById("view__image").style.display = "flex";
+          document.getElementById("delete__image").href =
+            "/delete/:" + image.src.slice(image.src.lastIndexOf("/") + 1);
         });
       });
     </script>
