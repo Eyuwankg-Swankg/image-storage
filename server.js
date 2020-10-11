@@ -304,5 +304,13 @@ app.get("/delete/:imagePath", (req, res) => {
   }
 });
 
+//@route  -  GET /delete/:imagePath
+//@desc  -  route to delete a image from a users gallery
+//@access  -  PRIVATE
+app.get("/logout", (req, res) => {
+  req.session.user = null;
+  res.redirect("/");
+});
+
 // listen to PORT
 app.listen(PORT, () => console.log("Server running at 3000"));

@@ -11,7 +11,15 @@
     <title>Gallery</title>
   </head>
   <body>
-    <h1><%=typeof user=='undefined'?'':user.username %>'s Gallery</h1>
+    <div class="header">
+      <div>
+        <h1><%=typeof user=='undefined'?'':user.username %>'s Gallery</h1>
+      </div>
+      <form method="GET" action="/logout">
+        <button>Logout</button>
+      </form>
+    </div>
+
     <div id="display__photos">
       <%if (user != "undefined") { %> <%if(user.photos.length>0){
       user.photos.forEach((image,index) => {%>

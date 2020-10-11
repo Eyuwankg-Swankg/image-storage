@@ -14,11 +14,28 @@ body {
   font-family: "Courier Prime", monospace;
 }
 
+.header {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.header div {
+  width: 91%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 h1 {
   padding: 3rem 0;
   text-align: center;
   color: white;
   letter-spacing: 0.2rem;
+  display: inline-block;
+  width: auto;
 }
 
 #add {
@@ -144,4 +161,49 @@ h1 {
 #view__image h2 {
   letter-spacing: 0.2rem;
   color: white;
+}
+
+.header button {
+  background-color: inherit;
+  cursor: pointer;
+  outline: none;
+  border: none;
+  padding: 5px 20px;
+  border-radius: 3px;
+  color: snow;
+  letter-spacing: 2px;
+  font-weight: 1000;
+  letter-spacing: 2px;
+  font-family: "Courier Prime", monospace;
+}
+
+.header button:hover {
+  color: rgba(255, 84, 106, 1);
+  background-color: snow;
+}
+
+/* Animation for Images while Entering */
+#display__photos img {
+  transition: transform 1.5s;
+  animation: alive 0.7s ease-out;
+}
+#display__photos img:hover {
+  transform: scale(1.1);
+  box-shadow: 5px 10px 10px rgb(220, 80, 120);
+}
+@keyframes alive {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  50% {
+    opacity: 0.2;
+  }
+  80% {
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
