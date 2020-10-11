@@ -207,3 +207,16 @@ h1 {
     transform: scale(1);
   }
 }
+
+#add {
+  animation: slideUp 1s ease-in;
+}
+
+@keyframes slideUp {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
